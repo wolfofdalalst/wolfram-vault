@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "wolfram-vault"
+version = "0.1.0"
+description = ""
+authors = ["Ayush Gupta <ayushgupta01195@gmail.com>"]
+readme = "README.md"
+packages = [{include = "wolfram_vault"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
