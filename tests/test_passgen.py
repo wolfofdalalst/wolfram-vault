@@ -1,3 +1,4 @@
+from curses.ascii import isalnum
 import string
 import unittest
 
@@ -21,6 +22,12 @@ class TestPassGen(unittest.TestCase):
                 if char in string.ascii_uppercase + string.punctuation
             )
         )
+    
+    def test_random_passphrase(self):
+        test_phrase = wolfram_vault.random_passphrase()
+        for words in test_phrase:
+            self.assertGreaterEqual(len(words), 4)
+            self.assertTrue(words.isalnum())
 
 
 if __name__ == "__main__":

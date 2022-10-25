@@ -40,5 +40,24 @@ def random_password(length=10, **kwargs) -> str:
     return password
 
 
-def random_passphrase():
-    pass
+def random_passphrase() -> list:
+    """Random passphrase generator
+
+    Returns:
+        list: fixed length of 5
+    """
+    try:
+        with open("/usr/share/dict/words") as fileobj:
+            words = []
+            for word in fileobj:
+                sword = word.strip()
+                if len(sword) > 4 and sword.isalpha():
+                    words.append(sword.lower())
+
+            passphrase = [secrets.choice(words) for _ in range(5)]
+
+            return passphrase
+
+    except FileNotFoundError:
+        # TODO handle this exception
+        return ["error", "file", "does", "not", "exist"]

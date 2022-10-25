@@ -1,3 +1,3 @@
-from wolfram_vault.passgen import random_password
+from wolfram_vault.passgen import random_password, random_passphrase
 
-__all__ = ['random_password']
+__all__ = ['random_password', 'random_passphrase']
