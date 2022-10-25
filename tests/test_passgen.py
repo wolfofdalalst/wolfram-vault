@@ -1,4 +1,3 @@
-from curses.ascii import isalnum
 import string
 import unittest
 
