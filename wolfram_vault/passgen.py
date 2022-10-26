@@ -35,10 +35,44 @@ def random_password(length=10, **kwargs) -> str:
 
     character_set = "".join(characters[0] for characters in options if characters[1])
 
-    password = "".join(secrets.choice(character_set) for i in range(length))
-
-    return password
+    return "".join(secrets.choice(character_set) for i in range(length))
 
 
-def random_passphrase():
-    pass
+def random_passphrase() -> list:
+    """Random passphrase generator
+
+    Returns:
+        list: fixed length of 5
+    """
+    return [secrets.choice(_word_list()) for _ in range(5)]
+
+
+def random_username() -> str:
+    """Random username generator of format `<5-letter-word><4-digit-int>`"""
+    return secrets.choice(_word_list(length=5)) + str(_randint(1000, 9999))
+
+
+def _randint(a: int, b: int) -> int:
+    """randint[a, b] function implemented using secrets module"""
+    return secrets.choice(range(a, b+1))
+
+
+def _word_list(length=4) -> list:
+    """Preferred word list taken from /usr/share/dict/words
+
+    Args:
+        length (int, optional): Length of each word. Defaults to 4.
+    """
+    try:
+        with open("/usr/share/dict/words") as fileobj:
+            words = []
+            for word in fileobj:
+                sword = word.strip()
+                if len(sword) > length and sword.isalpha():
+                    words.append(sword.lower())
+
+            return words
+
+    except FileNotFoundError:
+        # TODO handle this exception
+        return ["error", "file", "does", "not", "exist"]
