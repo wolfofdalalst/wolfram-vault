@@ -58,7 +58,7 @@ def _randint(a: int, b: int) -> int:
 
 
 def _word_list(length=4) -> list:
-    """Preferred word list taken from /usr/share/dict/words
+    """Preferred word list taken from `/usr/share/dict/words`
 
     Args:
         length (int, optional): Length of each word. Defaults to 4.
