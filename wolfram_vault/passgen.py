@@ -54,7 +54,7 @@ def random_username() -> str:
 
 def _randint(a: int, b: int) -> int:
     """randint[a, b] function implemented using secrets module"""
-    return secrets.choice(range(a, b+1))
+    return secrets.choice(range(a, b + 1))
 
 
 def _word_list(length=4) -> list:
@@ -75,4 +75,4 @@ def _word_list(length=4) -> list:
 
     except FileNotFoundError:
         # TODO handle this exception
-        return ["error", "file", "does", "not", "exist"]
+        return ["neurodendron", "shuha", "undervalues", "criminologic", "jemmying"]
