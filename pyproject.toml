@@ -2,7 +2,10 @@
 name = "wolfram-vault"
 version = "0.1.0"
 description = ""
-authors = ["Ayush Gupta <ayushgupta01195@gmail.com>"]
+authors = [
+    "Ayush Gupta <ayushgupta01195@gmail.com>",
+    "Sayanjit Ukil <>"    
+]
 readme = "README.md"
 packages = [{include = "wolfram_vault"}]
 
