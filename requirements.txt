@@ -6,4 +6,3 @@ mypy-extensions==0.4.3
 pathspec==0.10.1
 platformdirs==2.5.2
 tomli==2.0.1
--e git+ssh://git@github.com/wolfofdalalst/wolfram-vault.git@2a6574a2962cdeeb1d4d23650537230a00fcfb39#egg=wolfram_vault
