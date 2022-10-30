@@ -1,7 +1,18 @@
 import customtkinter
+import pyperclip
+
+from wolfram_vault.passgen import random_password
 
 customtkinter.set_appearance_mode("system")
 customtkinter.set_default_color_theme("green")
+
+
+class Font:
+    def helvetica(size=15):
+        return ("helvetica", size)
+
+    def mier(size=20):
+        return ("MierB03", size)
 
 
 class App(customtkinter.CTk):
@@ -9,20 +20,13 @@ class App(customtkinter.CTk):
     WIDTH = 550
     HEIGHT = 400
 
+    PADX = 20
+    PADY = 20
+
     def __init__(self):
         super().__init__()
 
-        def event(value=10):
-            self.length = customtkinter.CTkLabel(
-                master=self.frame_lower,
-                text=str(int(value)),
-                text_font=("Helvetica", 14, "bold"),
-                width=25,
-            )
-            self.length.grid(row=0, column=1)
-
         self.title("WolframVault")
-        # self.resizable('false', 'false')
         self.geometry(f"{App.WIDTH}x{App.HEIGHT}")
         self.protocol(
             "WM_DELETE_WINDOW", self.on_closing
@@ -46,35 +50,37 @@ class App(customtkinter.CTk):
 
         # =============== upper frame configure ===============
 
-        self.frame_upper.grid_columnconfigure(5, minsize=10)
-
         self.password = customtkinter.CTkLabel(
             master=self.frame_upper,
             text="Uxbghrhighj",
-            text_font=("MierB03", "20"),
+            text_font=Font.mier(),
             text_color="white",
         )  # displaying the password
         self.password.grid(row=0, column=0, padx=50)
 
-        self.button = customtkinter.CTkButton(
+        # TODO: fix the position of the copy button
+        self.copy_button = customtkinter.CTkButton(
             master=self.frame_upper,
             text="Copy",
-            command=None,
-            text_font=("MierB03", "15"),
+            text_font=Font.mier(size=15),
             corner_radius=15,
+            command=self.on_copy,
         )
-        self.button.grid(row=0, column=1, pady=20, padx=30)
+        self.copy_button.grid(row=0, column=1, pady=20, padx=30, sticky="nswe")
+
+        # TODO: create a reload button at r=0, c=2
 
         # =============== lower frame configure ===============
 
         self.label_length = customtkinter.CTkLabel(
             master=self.frame_lower,
             text="Password length:",
-            text_font=("Helvetica", "15"),
+            text_font=Font.helvetica(),
             text_color="white",
         )
-        self.label_length.grid(row=0, column=0, padx=20, pady=20)
+        self.label_length.grid(row=0, column=0, padx=self.PADX, pady=self.PADY)
 
+        # TODO: show interactive strength for different password length
         self.interactive_strength = customtkinter.CTkLabel(
             master=self.frame_lower,
             text="VERY STRONG",
@@ -87,59 +93,95 @@ class App(customtkinter.CTk):
         self.interactive_strength.grid(
             row=0,
             column=2,
-            padx=20,
-            pady=20,
+            padx=self.PADX,
+            pady=self.PADY,
         )
 
-        event()
+        # shows the password length on screen
+        # TODO: reduce the padding in x-direction
+        self.length = customtkinter.CTkLabel(
+            master=self.frame_lower,
+            text="10",
+            text_font=Font.helvetica(size=14) + ("bold",),
+            width=25,
+        )
+        self.length.grid(row=0, column=1)
+
         self.slider = customtkinter.CTkSlider(
             master=self.frame_lower,
             from_=0,
             to=20,
             width=500,
-            command=event,
+            command=self.slide_event,
         )  # slider to adjust the number of characters
-        self.slider.grid(row=1, column=0, columnspan=3, padx=20, pady=20, sticky="nsew")
+        self.slider.grid(
+            row=1, column=0, columnspan=3, padx=self.PADX, pady=self.PADY, sticky="nsew"
+        )
 
         # =============== character options ===============
+        # TODO: use objects to reduce code repetition
 
-        self.used = customtkinter.CTkLabel(
+        self.options_label = customtkinter.CTkLabel(
             master=self.frame_lower,
             text="Characters Used:",
-            text_font=("Helvetica", "15"),
+            text_font=Font.helvetica(),
             text_color="white",
         )
-        self.used.grid(row=2, column=0, padx=20, pady=20)
+        self.options_label.grid(row=2, column=0, padx=self.PADX, pady=self.PADY)
 
-        self.capital = customtkinter.CTkCheckBox(
+        self.uppercase = customtkinter.CTkCheckBox(
             master=self.frame_lower,
             text=" ABCD ",
-            onvalue="on",
-            offvalue="off",
             corner_radius=10,
             text_font=("Helvetica", "12"),
+            command=self.checkbox_event,
         )
-        self.capital.grid(row=3, column=0, padx=20, pady=10)
+        self.uppercase.grid(row=3, column=0, padx=20, pady=10)
 
-        self.numbers = customtkinter.CTkCheckBox(
+        self.digits = customtkinter.CTkCheckBox(
             master=self.frame_lower,
             text=" 1234 ",
-            onvalue="on",
-            offvalue="off",
             corner_radius=10,
             text_font=("Helvetica", "12"),
+            command=self.checkbox_event,
         )
-        self.numbers.grid(row=3, column=1, padx=20, pady=10)
+        self.digits.grid(row=3, column=1, padx=20, pady=10)
 
         self.punct = customtkinter.CTkCheckBox(
             master=self.frame_lower,
             text=" #$&% ",
-            onvalue="on",
-            offvalue=" off ",
             corner_radius=10,
             text_font=("Helvetica", "12"),
+            command=self.checkbox_event,
         )
         self.punct.grid(row=3, column=2, padx=20, pady=10)
+
+        # start the password generator
+        self.checkbox_event() 
+
+    def on_copy(self):
+        pyperclip.copy(self.password.text)
+
+    def get_char_len(self):
+        # returns the character length from slider
+        return int(self.slider.get())
+
+    def slide_event(self, value):
+        self.password.configure(text=random_password(length=self.get_char_len()))
+        self.length.configure(text=int(value))
+        self.checkbox_event()
+
+    # TODO: save the last options to text file
+    def checkbox_event(self):
+        self.password.configure(
+            text=random_password(
+                length=self.get_char_len(),
+                lowercase=True,
+                uppercase=self.uppercase.get(),
+                digits=self.digits.get(),
+                punctuation=self.punct.get(),
+            )
+        )
 
     def on_closing(self, event=0):
         self.destroy()
